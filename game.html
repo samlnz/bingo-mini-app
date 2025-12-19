@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Game - Let's Play!</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body class="game-page">
+    <!-- Transition Overlay -->
+    <div class="transition-overlay" id="transitionOverlay">
+        <div class="transition-content">
+            <div class="spinner"></div>
+            <h2>Starting Bingo Game...</h2>
+            <p>Get ready! The caller will start in a moment</p>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameContainer" style="display: none;">
+        <!-- Game Header -->
+        <header class="game-header">
+            <div class="game-info">
+                <h1><i class="fas fa-bingo-ball"></i> BINGO</h1>
+                <div class="game-stats">
+                    <span><i class="fas fa-users"></i> <span id="playerCount">0</span>/500</span>
+                    <span><i class="fas fa-hashtag"></i> Called: <span id="calledCount">0</span>/75</span>
+                </div>
+            </div>
+            <div class="user-display">
+                <span id="playerName">Player</span>
+                <div class="card-counter">
+                    <i class="fas fa-ticket-alt"></i> <span id="playerCardCount">0</span> cards
+                </div>
+            </div>
+        </header>
+
+        <!-- Bingo Caller Section -->
+        <div class="caller-section">
+            <div class="caller-title">
+                <i class="fas fa-bullhorn"></i> Bingo Caller
+                <div class="caller-controls">
+                    <button class="btn-small" id="toggleCaller">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn-small" id="muteBtn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="current-number-container">
+                <div class="current-number-label">Current Number</div>
+                <div class="current-number" id="currentNumber">
+                    <div class="number-ball"></div>
+                    <div class="number-letter"></div>
+                    <div class="number-digit">--</div>
+                </div>
+                <div class="number-progress">
+                    <div class="progress-bar" id="numberProgress"></div>
+                    <span>Next number in: <span id="nextNumberTime">5</span>s</span>
+                </div>
+            </div>
+            
+            <div class="called-numbers">
+                <h3><i class="fas fa-history"></i> Recently Called</h3>
+                <div class="called-numbers-grid" id="calledNumbers">
+                    <!-- Called numbers will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Cards Section -->
+        <div class="player-cards-section">
+            <div class="section-header">
+                <h2><i class="fas fa-ticket-alt"></i> Your Bingo Cards</h2>
+                <div class="auto-bingo-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoBingo" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>Auto-BINGO</span>
+                </div>
+            </div>
+            
+            <div class="cards-carousel" id="cardsCarousel">
+                <!-- Player's bingo cards will be loaded here -->
+            </div>
+            
+            <div class="card-navigation">
+                <button class="nav-btn" id="prevCard"><i class="fas fa-chevron-left"></i></button>
+                <span class="card-position">Card <span id="currentCard">1</span> of <span id="totalCards">0</span></span>
+                <button class="nav-btn" id="nextCard"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Bingo Button -->
+        <div class="bingo-button-container">
+            <button class="bingo-btn" id="bingoBtn">
+                <div class="bingo-text">BINGO!</div>
+                <div class="bingo-subtext">Tap if you have a winning line</div>
+            </button>
+            <div class="bingo-hint">
+                <i class="fas fa-lightbulb"></i> Winning line: Any horizontal, vertical, or diagonal
+            </div>
+        </div>
+
+        <!-- Winners Modal -->
+        <div class="modal-overlay" id="winnersModal">
+            <div class="modal-content winner-modal">
+                <div class="confetti-container">
+                    <div class="confetti"></div>
+                    <div class="confetti"></div>
+                    <div class="confetti"></div>
+                    <div class="confetti"></div>
+                    <div class="confetti"></div>
+                </div>
+                <div class="winner-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2>BINGO! WE HAVE A WINNER!</h2>
+                <div class="winners-list" id="winnersList">
+                    <!-- Winners will be listed here -->
+                </div>
+                <div class="winning-number">
+                    Winning Number: <span id="winningNumber">B12</span>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-primary" id="playAgainBtn">Play Again</button>
+                    <button class="btn-secondary" id="closeModalBtn">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Elements -->
+        <audio id="numberCallAudio" preload="auto">
+            <!-- Add your number call audio file here -->
+            <source src="audio/number-call.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="bingoWinAudio" preload="auto">
+            <!-- Add your bingo win audio file here -->
+            <source src="audio/bingo-win.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="backgroundAudio" loop preload="auto">
+            <!-- Add your background music here -->
+            <source src="audio/background.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="game-logic.js"></script>
+    <script>
+        // Initialize Telegram
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        // Show transition overlay for 3 seconds
+        setTimeout(() => {
+            document.getElementById('transitionOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('transitionOverlay').style.display = 'none';
+                document.getElementById('gameContainer').style.display = 'block';
+                // Start game logic
+                initializeGame();
+            }, 1000);
+        }, 3000);
+        
+        function initializeGame() {
+            // Get selected cards from localStorage
+            const selectedCards = JSON.parse(localStorage.getItem('selectedCards') || '[]');
+            const user = JSON.parse(localStorage.getItem('telegramUser') || '{}');
+            
+            // Set player info
+            document.getElementById('playerName').textContent = user.firstName || 'Player';
+            document.getElementById('playerCardCount').textContent = selectedCards.length;
+            
+            // Initialize game
+            GameLogic.init(selectedCards, user);
+        }
+    </script>
+</body>
+</html>
