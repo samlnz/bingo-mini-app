@@ -3,106 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingo Game - Let's Play!</title>
+    <title>Game - Beteseb Bingo</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="game-page">
-    <!-- Transition Overlay -->
-    <div class="transition-overlay" id="transitionOverlay">
-        <div class="transition-content">
-            <div class="spinner"></div>
-            <h2>Starting Bingo Game...</h2>
-            <p>Get ready! The caller will start in a moment</p>
+    <div class="container">
+        <!-- Game Info Header -->
+        <div class="game-info-header">
+            <div class="game-id">
+                <span class="label">Game ID:</span>
+                <span class="value" id="gameId">BB838588</span>
+            </div>
+            
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="label">Players</span>
+                    <span class="value" id="playersCount">176</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Bet</span>
+                    <span class="value" id="gameBet">10</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Derash</span>
+                    <span class="value" id="gamePool">1408</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Called</span>
+                    <span class="value" id="calledCount">9</span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="game-container" id="gameContainer" style="display: none;">
-        <!-- Game Header -->
-        <header class="game-header">
-            <div class="game-info">
-                <h1><i class="fas fa-bingo-ball"></i> BINGO</h1>
-                <div class="game-stats">
-                    <span><i class="fas fa-users"></i> <span id="playerCount">0</span>/500</span>
-                    <span><i class="fas fa-hashtag"></i> Called: <span id="calledCount">0</span>/75</span>
+        <!-- Game Content -->
+        <div class="game-content">
+            <!-- Bingo Card -->
+            <div class="bingo-card-container">
+                <div class="bingo-card-header">
+                    <div class="bingo-title">BINGO</div>
+                    <div class="auto-toggle">
+                        <label class="switch">
+                            <input type="checkbox" id="autoBingo" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Automatic</span>
+                    </div>
+                </div>
+                
+                <div class="bingo-grid" id="bingoGrid">
+                    <!-- BINGO columns -->
+                    <div class="bingo-column">
+                        <div class="column-header">B</div>
+                        <div class="bingo-cell" data-number="1">1</div>
+                        <div class="bingo-cell" data-number="2">2</div>
+                        <div class="bingo-cell" data-number="3">3</div>
+                        <div class="bingo-cell" data-number="4">4</div>
+                        <div class="bingo-cell" data-number="5">5</div>
+                    </div>
+                    <div class="bingo-column">
+                        <div class="column-header">I</div>
+                        <div class="bingo-cell" data-number="16">16</div>
+                        <div class="bingo-cell" data-number="17">17</div>
+                        <div class="bingo-cell" data-number="18">18</div>
+                        <div class="bingo-cell" data-number="19">19</div>
+                        <div class="bingo-cell" data-number="20">20</div>
+                    </div>
+                    <div class="bingo-column">
+                        <div class="column-header">N</div>
+                        <div class="bingo-cell" data-number="31">31</div>
+                        <div class="bingo-cell" data-number="32">32</div>
+                        <div class="bingo-cell free" data-number="FREE">FREE</div>
+                        <div class="bingo-cell" data-number="34">34</div>
+                        <div class="bingo-cell" data-number="35">35</div>
+                    </div>
+                    <div class="bingo-column">
+                        <div class="column-header">G</div>
+                        <div class="bingo-cell" data-number="46">46</div>
+                        <div class="bingo-cell" data-number="47">47</div>
+                        <div class="bingo-cell" data-number="48">48</div>
+                        <div class="bingo-cell" data-number="49">49</div>
+                        <div class="bingo-cell" data-number="50">50</div>
+                    </div>
+                    <div class="bingo-column">
+                        <div class="column-header">O</div>
+                        <div class="bingo-cell" data-number="61">61</div>
+                        <div class="bingo-cell" data-number="62">62</div>
+                        <div class="bingo-cell" data-number="63">63</div>
+                        <div class="bingo-cell" data-number="64">64</div>
+                        <div class="bingo-cell" data-number="65">65</div>
+                    </div>
+                </div>
+                
+                <div class="card-info">
+                    <span>Card #<span id="cardNumber">1</span></span>
+                    <div class="card-navigation">
+                        <button class="nav-btn" id="prevCard"><i class="fas fa-chevron-left"></i></button>
+                        <button class="nav-btn" id="nextCard"><i class="fas fa-chevron-right"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="user-display">
-                <span id="playerName">Player</span>
-                <div class="card-counter">
-                    <i class="fas fa-ticket-alt"></i> <span id="playerCardCount">0</span> cards
-                </div>
-            </div>
-        </header>
 
-        <!-- Bingo Caller Section -->
-        <div class="caller-section">
-            <div class="caller-title">
-                <i class="fas fa-bullhorn"></i> Bingo Caller
+            <!-- Called Numbers Section -->
+            <div class="called-numbers-section">
+                <div class="section-title">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Called Numbers</span>
+                </div>
+                
+                <div class="called-numbers-display">
+                    <div class="current-number" id="currentNumber">
+                        <div class="number-ball">B-5</div>
+                        <div class="number-info">Latest Call</div>
+                    </div>
+                    
+                    <div class="recent-numbers" id="recentNumbers">
+                        <!-- Recent numbers will be added here -->
+                    </div>
+                </div>
+                
                 <div class="caller-controls">
-                    <button class="btn-small" id="toggleCaller">
-                        <i class="fas fa-pause"></i> Pause
+                    <button class="control-btn" id="pauseBtn">
+                        <i class="fas fa-pause"></i>
+                        Pause
                     </button>
-                    <button class="btn-small" id="muteBtn">
+                    <button class="control-btn" id="muteBtn">
                         <i class="fas fa-volume-up"></i>
+                        Sound
+                    </button>
+                    <button class="control-btn" id="speedBtn">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Speed
                     </button>
                 </div>
             </div>
-            
-            <div class="current-number-container">
-                <div class="current-number-label">Current Number</div>
-                <div class="current-number" id="currentNumber">
-                    <div class="number-ball"></div>
-                    <div class="number-letter"></div>
-                    <div class="number-digit">--</div>
-                </div>
-                <div class="number-progress">
-                    <div class="progress-bar" id="numberProgress"></div>
-                    <span>Next number in: <span id="nextNumberTime">5</span>s</span>
-                </div>
-            </div>
-            
-            <div class="called-numbers">
-                <h3><i class="fas fa-history"></i> Recently Called</h3>
-                <div class="called-numbers-grid" id="calledNumbers">
-                    <!-- Called numbers will appear here -->
-                </div>
-            </div>
-        </div>
 
-        <!-- Player Cards Section -->
-        <div class="player-cards-section">
-            <div class="section-header">
-                <h2><i class="fas fa-ticket-alt"></i> Your Bingo Cards</h2>
-                <div class="auto-bingo-toggle">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="autoBingo" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span>Auto-BINGO</span>
+            <!-- Bingo Button -->
+            <div class="bingo-button-section">
+                <button class="bingo-btn" id="bingoBtn">
+                    <div class="bingo-text">BINGO!</div>
+                    <div class="bingo-sub">Claim Your Win</div>
+                </button>
+                <div class="bingo-help">
+                    <i class="fas fa-lightbulb"></i>
+                    Complete any line (horizontal, vertical, or diagonal)
                 </div>
             </div>
-            
-            <div class="cards-carousel" id="cardsCarousel">
-                <!-- Player's bingo cards will be loaded here -->
-            </div>
-            
-            <div class="card-navigation">
-                <button class="nav-btn" id="prevCard"><i class="fas fa-chevron-left"></i></button>
-                <span class="card-position">Card <span id="currentCard">1</span> of <span id="totalCards">0</span></span>
-                <button class="nav-btn" id="nextCard"><i class="fas fa-chevron-right"></i></button>
-            </div>
-        </div>
 
-        <!-- Bingo Button -->
-        <div class="bingo-button-container">
-            <button class="bingo-btn" id="bingoBtn">
-                <div class="bingo-text">BINGO!</div>
-                <div class="bingo-subtext">Tap if you have a winning line</div>
-            </button>
-            <div class="bingo-hint">
-                <i class="fas fa-lightbulb"></i> Winning line: Any horizontal, vertical, or diagonal
+            <!-- Watching Only Section -->
+            <div class="watching-section">
+                <div class="section-title">
+                    <i class="fas fa-eye"></i>
+                    <span>Watching Only</span>
+                </div>
+                <div class="watching-info">
+                    <div class="info-text">PHU HC GBPP +E9PZA:: X-Ah HC XhhE9PC XHU E/Thn:</div>
+                    <div class="info-note">Spectator mode activated</div>
+                </div>
             </div>
         </div>
 
@@ -113,71 +171,69 @@
                     <div class="confetti"></div>
                     <div class="confetti"></div>
                     <div class="confetti"></div>
-                    <div class="confetti"></div>
-                    <div class="confetti"></div>
                 </div>
+                
                 <div class="winner-icon">
                     <i class="fas fa-trophy"></i>
                 </div>
-                <h2>BINGO! WE HAVE A WINNER!</h2>
-                <div class="winners-list" id="winnersList">
-                    <!-- Winners will be listed here -->
+                
+                <h2>BINGO! WE HAVE WINNERS!</h2>
+                
+                <div class="winner-details">
+                    <div class="winner-info">
+                        <div class="winner-name">@<span id="winnerUsername">username</span></div>
+                        <div class="winner-prize">Prize: <span id="winnerPrize">1408</span></div>
+                    </div>
+                    <div class="winning-card">
+                        Winning Card: #<span id="winningCard">1</span>
+                    </div>
+                    <div class="winning-numbers">
+                        Winning Line: <span id="winningLine">B1-I16-N31-G46-O61</span>
+                    </div>
                 </div>
-                <div class="winning-number">
-                    Winning Number: <span id="winningNumber">B12</span>
-                </div>
-                <div class="modal-buttons">
-                    <button class="btn-primary" id="playAgainBtn">Play Again</button>
-                    <button class="btn-secondary" id="closeModalBtn">Close</button>
+                
+                <div class="modal-actions">
+                    <button class="btn-primary" id="claimPrize">Claim Prize</button>
+                    <button class="btn-secondary" id="playAgain">Play Again</button>
                 </div>
             </div>
         </div>
 
-        <!-- Audio Elements -->
-        <audio id="numberCallAudio" preload="auto">
-            <!-- Add your number call audio file here -->
-            <source src="audio/number-call.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="bingoWinAudio" preload="auto">
-            <!-- Add your bingo win audio file here -->
-            <source src="audio/bingo-win.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="backgroundAudio" loop preload="auto">
-            <!-- Add your background music here -->
-            <source src="audio/background.mp3" type="audio/mpeg">
-        </audio>
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="select.html" class="nav-item">
+                <i class="fas fa-dice"></i>
+                <span>Game</span>
+            </a>
+            <a href="history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="wallet.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
     </div>
 
+    <!-- Audio Elements -->
+    <audio id="callAudio" src="audio/number-call.mp3" preload="auto"></audio>
+    <audio id="winAudio" src="audio/bingo-win.mp3" preload="auto"></audio>
+
     <script src="script.js"></script>
-    <script src="game-logic.js"></script>
+    <script src="game.js"></script>
     <script>
-        // Initialize Telegram
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        // Show transition overlay for 3 seconds
-        setTimeout(() => {
-            document.getElementById('transitionOverlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('transitionOverlay').style.display = 'none';
-                document.getElementById('gameContainer').style.display = 'block';
-                // Start game logic
-                initializeGame();
-            }, 1000);
-        }, 3000);
-        
-        function initializeGame() {
-            // Get selected cards from localStorage
-            const selectedCards = JSON.parse(localStorage.getItem('selectedCards') || '[]');
-            const user = JSON.parse(localStorage.getItem('telegramUser') || '{}');
-            
-            // Set player info
-            document.getElementById('playerName').textContent = user.firstName || 'Player';
-            document.getElementById('playerCardCount').textContent = selectedCards.length;
-            
-            // Initialize game
-            GameLogic.init(selectedCards, user);
-        }
+        // Initialize game
+        const game = new BingoGame();
+        game.init();
     </script>
 </body>
 </html>

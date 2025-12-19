@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - Beteseb Bingo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .history-page .history-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 5px;
+            margin: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .history-list {
+            padding: 0 20px 20px;
+        }
+        
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-game {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .game-id {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .game-date {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .game-result {
+            text-align: right;
+        }
+        
+        .game-prize.win {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .game-prize.loss {
+            color: #e74c3c;
+        }
+        
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="history-page">
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-btn" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+            <h1><i class="fas fa-history"></i> History</h1>
+        </header>
+
+        <!-- Tabs -->
+        <div class="history-tabs">
+            <div class="tab active" onclick="showTab('games')">Games</div>
+            <div class="tab" onclick="showTab('transactions')">Transactions</div>
+            <div class="tab" onclick="showTab('wins')">Wins</div>
+        </div>
+
+        <!-- Games History -->
+        <div class="history-list" id="gamesHistory">
+            <!-- Games will be loaded here -->
+        </div>
+
+        <!-- Transactions History -->
+        <div class="history-list" id="transactionsHistory" style="display: none;">
+            <!-- Transactions will be loaded here -->
+        </div>
+
+        <!-- Wins History -->
+        <div class="history-list" id="winsHistory" style="display: none;">
+            <!-- Wins will be loaded here -->
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="select.html" class="nav-item">
+                <i class="fas fa-dice"></i>
+                <span>Game</span>
+            </a>
+            <a href="history.html" class="nav-item active">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="wallet.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Show specific tab
+        function showTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show corresponding content
+            document.getElementById('gamesHistory').style.display = 'none';
+            document.getElementById('transactionsHistory').style.display = 'none';
+            document.getElementById('winsHistory').style.display = 'none';
+            document.getElementById(tabName + 'History').style.display = 'block';
+            
+            // Load data for tab
+            if (tabName === 'games') loadGamesHistory();
+            else if (tabName === 'transactions') loadTransactionsHistory();
+            else if (tabName === 'wins') loadWinsHistory();
+        }
+        
+        // Load games history
+        function loadGamesHistory() {
+            const history = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+            const container = document.getElementById('gamesHistory');
+            

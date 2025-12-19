@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Beteseb Bingo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .profile-page .profile-header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #667eea;
+            border: 4px solid white;
+            overflow: hidden;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .profile-username {
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .profile-actions {
+            padding: 20px;
+        }
+        
+        .action-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .action-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-item:last-child {
+            border-bottom: none;
+        }
+        
+        .action-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .action-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-text {
+            font-size: 16px;
+        }
+        
+        .action-arrow {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="profile-page">
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-name" id="userName">Loading...</div>
+            <div class="profile-username" id="userUsername">@username</div>
+            <div class="profile-id">ID: <span id="userId">000000</span></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+            <div class="stat-box">
+                <div class="stat-value" id="totalGames">0</div>
+                <div class="stat-label">Games Played</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="totalWins">0</div>
+                <div class="stat-label">Games Won</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="totalEarned">0</div>
+                <div class="stat-label">Total Earned</div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="profile-actions">
+            <div class="action-list">
+                <div class="action-item" onclick="showReferral()">
+                    <div class="action-left">
+                        <div class="action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="action-text">Refer Friends</div>
+                    </div>
+                    <div class="action-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="action-item" onclick="showSettings()">
+                    <div class="action-left">
+                        <div class="action-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="action-text">Settings</div>
+                    </div>
+                    <div class="action-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="action-item" onclick="showHelp()">
+                    <div class="action-left">
+                        <div class="action-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="action-text">Help & Support</div>
+                    </div>
+                    <div class="action-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="action-item" onclick="showAbout()">
+                    <div class="action-left">
+                        <div class="action-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="action-text">About</div>
+                    </div>
+                    <div class="action-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="action-item" onclick="logout()">
+                    <div class="action-left">
+                        <div class="action-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="action-text">Logout</div>
+                    </div>
+                    <div class="action-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="select.html" class="nav-item">
+                <i class="fas fa-dice"></i>
+                <span>Game</span>
+            </a>
+            <a href="history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="wallet.html" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Load user data
+        function loadProfile() {
+            const user = JSON.parse(localStorage.getItem('telegramUser') || '{}');
+            const wallet = JSON.parse(localStorage.getItem('userWallet') || '{"main":0,"play":0,"total":0}');
+            const history = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+            
+            // Set user info
+            document.getElementById('userName').textContent = user.firstName || 'Player';
+            document.getElementById('userUsername').textContent = '@' + (user.username || 'player');
+            document.getElementById('userId').textContent = user.id || '000000';
+            
+            // Set avatar
+            const avatar = document.getElementById('userAvatar');
+            if (user.photoUrl) {
+                avatar.innerHTML = `<img src="${user.photoUrl}" alt="Avatar">`;
+            }
+            
+            // Calculate stats
+            const totalGames = history.length;
+            const totalWins = history.filter(game => game.prize > 0).length;
+            const totalEarned = history.reduce((sum, game) => sum + (game.prize || 0), 0);
+            
+            document.getElementById('totalGames').textContent = totalGames;
+            document.getElementById('totalWins').textContent = totalWins;
+            document.getElementById('totalEarned').textContent = totalEarned;
+        }
+        
+        // Action functions
+        function showReferral() {
+            const referralCode = 'BINGO' + (Math.random().toString(36).substr(2, 6).toUpperCase());
+            alert(`Your referral code: ${referralCode}\n\nShare with friends to earn bonuses!`);
+        }
+        
+        function showSettings() {
+            alert('Settings will be available in the next update!');
+        }
+        
+        function showHelp() {
+            alert('For help and support, contact us at:\nsupport@betesebbingo.com\n\nWe\'re here 24/7!');
+        }
+        
+        function showAbout() {
+            alert('Beteseb Bingo v1.0\n\nA fun and exciting bingo game with real rewards!\n\nPlay responsibly.');
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('telegramUser');
+                localStorage.removeItem('userWallet');
+                localStorage.removeItem('gameHistory');
+                localStorage.removeItem('transactionHistory');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+</body>
+</html>

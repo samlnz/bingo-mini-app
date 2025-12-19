@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet - Beteseb Bingo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="wallet-page">
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="back-btn" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+            <h1><i class="fas fa-wallet"></i> Wallet</h1>
+        </header>
+
+        <!-- Balance Cards -->
+        <div class="wallet-balances">
+            <div class="balance-card main-wallet">
+                <div class="balance-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="balance-info">
+                    <div class="balance-label">Main Wallet</div>
+                    <div class="balance-amount" id="mainBalance">0</div>
+                </div>
+                <div class="balance-actions">
+                    <button class="btn-small" onclick="deposit()">
+                        <i class="fas fa-plus"></i>
+                        Add
+                    </button>
+                </div>
+            </div>
+            
+            <div class="balance-card play-wallet">
+                <div class="balance-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="balance-info">
+                    <div class="balance-label">Play Wallet</div>
+                    <div class="balance-amount" id="playBalance">0</div>
+                </div>
+                <div class="balance-actions">
+                    <button class="btn-small" onclick="transferToPlay()">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transfer
+                    </button>
+                </div>
+            </div>
+            
+            <div class="balance-card total-wallet">
+                <div class="balance-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="balance-info">
+                    <div class="balance-label">Total Balance</div>
+                    <div class="balance-amount" id="totalBalance">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="deposit()">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Deposit</span>
+                </button>
+                <button class="action-btn" onclick="withdraw()">
+                    <i class="fas fa-minus-circle"></i>
+                    <span>Withdraw</span>
+                </button>
+                <button class="action-btn" onclick="transfer()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transfer</span>
+                </button>
+                <button class="action-btn" onclick="showHistory()">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="recent-transactions">
+            <h3>Recent Transactions</h3>
+            <div class="transactions-list" id="transactionsList">
+                <!-- Transactions will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="select.html" class="nav-item">
+                <i class="fas fa-dice"></i>
+                <span>Game</span>
+            </a>
+            <a href="history.html" class="nav-item">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="wallet.html" class="nav-item active">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Load wallet data
+        function loadWallet() {
+            const wallet = JSON.parse(localStorage.getItem('userWallet') || '{"main":0,"play":0,"total":0}');
+            
+            document.getElementById('mainBalance').textContent = wallet.main;
+            document.getElementById('playBalance').textContent = wallet.play;
+            document.getElementById('totalBalance').textContent = wallet.total;
+            
+            loadTransactions();
+        }
+        
+        function loadTransactions() {
+            const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
+            const list = document.getElementById('transactionsList');
+            
+            if (history.length === 0) {
+                list.innerHTML = '<div class="empty-state">No transactions yet</div>';
+                return;
+            }
+            
+            list.innerHTML = history.slice(0, 10).map(transaction => `
+                <div class="transaction-item ${transaction.type}">
+                    <div class="transaction-icon">
+                        <i class="fas fa-${transaction.type === 'deposit' ? 'arrow-down' : 'arrow-up'}"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">${transaction.description}</div>
+                        <div class="transaction-date">${new Date(transaction.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="transaction-amount ${transaction.type}">
+                        ${transaction.type === 'deposit' ? '+' : '-'}${transaction.amount}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function deposit() {
+            const amount = prompt('Enter deposit amount:', '100');
+            if (amount && !isNaN(amount) && amount > 0) {
+                const wallet = JSON.parse(localStorage.getItem('userWallet') || '{"main":0,"play":0,"total":0}');
+                wallet.main += parseInt(amount);
+                wallet.total = wallet.main + wallet.play;
+                localStorage.setItem('userWallet', JSON.stringify(wallet));
+                
+                // Record transaction
+                const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
+                history.unshift({
+                    type: 'deposit',
+                    amount: parseInt(amount),
+                    description: 'Wallet Deposit',
+                    date: new Date().toISOString()
+                });
+                localStorage.setItem('transactionHistory', JSON.stringify(history));
+                
+                loadWallet();
+                alert(`Successfully deposited ${amount}!`);
+            }
+        }
+        
+        function withdraw() {
+            const wallet = JSON.parse(localStorage.getItem('userWallet') || '{"main":0,"play":0,"total":0}');
+            if (wallet.main === 0) {
+                alert('No balance to withdraw!');
+                return;
+            }
+            
+            const amount = prompt(`Enter withdrawal amount (Max: ${wallet.main}):`, '100');
+            if (amount && !isNaN(amount) && amount > 0 && amount <= wallet.main) {
+                wallet.main -= parseInt(amount);
+                wallet.total = wallet.main + wallet.play;
+                localStorage.setItem('userWallet', JSON.stringify(wallet));
+                
+                // Record transaction
+                const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
+                history.unshift({
+                    type: 'withdrawal',
+                    amount: parseInt(amount),
+                    description: 'Wallet Withdrawal',
+                    date: new Date().toISOString()
+                });
+                localStorage.setItem('transactionHistory', JSON.stringify(history));
+                
+                loadWallet();
+                alert(`Withdrawal of ${amount} initiated!`);
+            }
+        }
+        
+        function transfer() {
+            const wallet = JSON.parse(localStorage.getItem('userWallet') || '{"main":0,"play":0,"total":0}');
+            const amount = prompt(`Enter amount to transfer to Play Wallet (Max: ${wallet.main}):`, '100');
+            
+            if (amount && !isNaN(amount) && amount > 0 && amount <= wallet.main) {
+                wallet.main -= parseInt(amount);
+                wallet.play += parseInt(amount);
+                wallet.total = wallet.main + wallet.play;
+                localStorage.setItem('userWallet', JSON.stringify(wallet));
+                
+                // Record transaction
+                const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
+                history.unshift({
+                    type: 'transfer',
+                    amount: parseInt(amount),
+                    description: 'Transfer to Play Wallet',
+                    date: new Date().toISOString()
+                });
+                localStorage.setItem('transactionHistory', JSON.stringify(history));
+                
+                loadWallet();
+                alert(`Transferred ${amount} to Play Wallet!`);
+            }
+        }
+        
+        function transferToPlay() {
+            transfer();
+        }
+        
+        function showHistory() {
+            window.location.href = 'history.html';
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', loadWallet);
+    </script>
+</body>
+</html>
