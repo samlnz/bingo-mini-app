@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bingo Casino - Play & Win</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Page -->
+        <div id="welcomePage" class="page active">
+            <div class="header">
+                <h1 class="logo"><i class="fas fa-dice"></i> BINGO CASINO</h1>
+                <div class="balance">Balance: <span id="balance">1000</span> Birr</div>
+            </div>
+            
+            <div class="main-content">
+                <div class="game-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Next Game Prize</h3>
+                            <p class="prize-amount" id="prizePool">0 Birr</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Players Online</h3>
+                            <p class="player-count" id="playerCount">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>Game Starts In</h3>
+                            <p class="timer" id="gameTimer">02:00</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stake-info">
+                    <div class="stake-card">
+                        <h2>Game Stake</h2>
+                        <div class="stake-amount">
+                            <i class="fas fa-coins"></i>
+                            <span>10 Birr</span>
+                        </div>
+                        <p class="stake-note">Per card • Max 2 cards per player</p>
+                    </div>
+                </div>
+                
+                <button id="playButton" class="play-btn">
+                    <i class="fas fa-play"></i> PLAY NOW
+                </button>
+                
+                <div class="rules">
+                    <h3><i class="fas fa-info-circle"></i> Game Rules</h3>
+                    <ul>
+                        <li>Select 1-2 bingo cards from 500 available</li>
+                        <li>Cards cost 10 Birr each</li>
+                        <li>First player to complete any line wins</li>
+                        <li>Prize = (Total Stakes × 80%)</li>
+                        <li>20% house commission</li>
+                        <li>Auto-disqualification for false bingo</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="user-info">
+                    <i class="fas fa-user"></i>
+                    <span id="userName">Loading...</span>
+                </div>
+                <div class="game-id">
+                    Game ID: <span id="gameId">#BNG001</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
